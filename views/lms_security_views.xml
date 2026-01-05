@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Security Groups -->
+        <record id="group_lms_administrator" model="res.groups">
+            <field name="name">LMS Administrator</field>
+            <field name="category_id" ref="base.module_category_lms"/>
+            <field name="implied_ids" eval="[(4, ref('group_lms_manager'))]"/>
+        </record>
+        
+        <record id="group_lms_manager" model="res.groups">
+            <field name="name">LMS Manager</field>
+            <field name="category_id" ref="base.module_category_lms"/>
+            <field name="implied_ids" eval="[(4, ref('group_lms_instructor'))]"/>
+        </record>
+        
+        <record id="group_lms_instructor" model="res.groups">
+            <field name="name">LMS Instructor</field>
+            <field name="category_id" ref="base.module_category_lms"/>
+            <field name="implied_ids" eval="[(4, ref('group_lms_student'))]"/>
+        </record>
+        
+        <record id="group_lms_student" model="res.groups">
+            <field name="name">LMS Student</field>
+            <field name="category_id" ref="base.module_category_lms"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+        
+        <!-- Security Rules (Complement to ir_rules.xml) -->
+        <record id="record_rule_lms_content" model="ir.rule">
+            <field name="name">LMS Content Access</field>
+            <field name="model_id" ref="model_lms_content"/>
+            <field name="global" eval="False"/>
+            <field name="domain_force">['|', ('module_id.course_id.published', '=', True), ('module_id.course_id.instructor_id', '=', user.partner_id.id)]</field>
+            <field name="groups" eval="[(4, ref('group_lms_instructor'))]"/>
+        </record>
+        
+        <!-- Access Controls -->
+        <record id="access_lms_advanced" model="ir.model.access">
+            <field name="name">lms.adaptive.learning access</field>
+            <field name="model_id" ref="model_lms_adaptive_learning"/>
+            <field name="group_id" ref="group_lms_instructor"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+        
+        <record id="access_lms_scorm" model="ir.model.access">
+            <field name="name">lms.scorm.integration access</field>
+            <field name="model_id" ref="model_lms_scorm_integration"/>
+            <field name="group_id" ref="group_lms_instructor"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+        
+        <!-- Security Views -->
+        <record id="view_security_dashboard" model="ir.ui.view">
+            <field name="name">Security Dashboard</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='access_rights']" position="after">
+                    <page string="LMS Permissions">
+                        <group>
+                            <field name="groups_id" widget="many2many_tags" domain="[('category_id.name', 'ilike', 'LMS')]"/>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        
+        <!-- Security Actions -->
+        <record id="action_check_security" model="ir.actions.server">
+            <field name="name">Check Security Access</field>
+            <field name="model_id" ref="model_res_users"/>
+            <field name="state">code</field>
+            <field name="code">
+                if records:
+                    security = env['lms.security']
+                    for user in records:
+                        # يمكنك إضافة منطق التحقق هنا
+                        pass
+            </field>
+        </record>
+        
+    </data>
+</odoo>

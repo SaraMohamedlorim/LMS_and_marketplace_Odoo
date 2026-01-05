@@ -1,0 +1,118 @@
+<!-- lms_compliance_views.xml -->
+<odoo>
+    <!-- Compliance Rule Views -->
+    <record id="view_lms_compliance_rule_tree" model="ir.ui.view">
+        <field name="name">lms.compliance.rule.tree</field>
+        <field name="model">lms.compliance.rule</field>
+        <field name="arch" type="xml">
+            <tree string="Compliance Rules">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="company_id"/>
+                <field name="priority"/>
+                <field name="deadline_date"/>
+                <field name="compliance_rate" widget="progressbar"/>
+                <field name="is_active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_lms_compliance_rule_form" model="ir.ui.view">
+        <field name="name">lms.compliance.rule.form</field>
+        <field name="model">lms.compliance.rule</field>
+        <field name="arch" type="xml">
+            <form string="Compliance Rule">
+                <header>
+                    <button name="action_check_compliance" type="object" string="Check Compliance"/>
+                    <button name="action_send_reminders" type="object" string="Send Reminders"/>
+                    <button name="action_view_non_compliant" type="object" string="View Non-Compliant"/>
+                    <button name="action_generate_report" type="object" string="Generate Report"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_check_compliance" type="object" class="oe_stat_button" icon="fa-check">
+                            <field name="compliance_rate" widget="statinfo" string="Compliance"/>
+                        </button>
+                        <button name="action_view_non_compliant" type="object" class="oe_stat_button" icon="fa-exclamation-triangle">
+                            <field name="non_compliant_employees" widget="statinfo" string="Non-Compliant"/>
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="company_id"/>
+                            <field name="priority"/>
+                            <field name="is_active"/>
+                        </group>
+                        <group>
+                            <field name="effective_date"/>
+                            <field name="end_date"/>
+                            <field name="deadline_date"/>
+                            <field name="days_before_deadline_reminder"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Scope">
+                            <field name="description" nolabel="1"/>
+                            <group>
+                                <group>
+                                    <field name="department_ids" widget="many2many_tags"/>
+                                    <field name="job_position_ids" widget="many2many_tags"/>
+                                    <field name="employee_category_ids" widget="many2many_tags"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Requirements">
+                            <group>
+                                <group>
+                                    <field name="course_id"/>
+                                    <field name="alternative_course_ids" widget="many2many_tags"/>
+                                    <field name="min_score"/>
+                                    <field name="require_certificate"/>
+                                </group>
+                                <group>
+                                    <field name="renewal_required"/>
+                                    <field name="renewal_period_months" attrs="{'invisible': [('renewal_required', '=', False)]}"/>
+                                    <field name="enforcement_action"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Statistics">
+                            <group>
+                                <group>
+                                    <field name="total_affected_employees" readonly="1"/>
+                                    <field name="compliant_employees" readonly="1"/>
+                                    <field name="non_compliant_employees" readonly="1"/>
+                                    <field name="compliance_rate" readonly="1" widget="progressbar"/>
+                                </group>
+                                <group>
+                                    <field name="last_compliance_check" readonly="1"/>
+                                    <field name="next_check_date" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Tracking">
+                            <field name="enrollment_ids" readonly="1">
+                                <tree>
+                                    <field name="student_id"/>
+                                    <field name="state"/>
+                                    <field name="score"/>
+                                    <field name="certificate_id"/>
+                                </tree>
+                            </field>
+                            <field name="exception_ids">
+                                <tree>
+                                    <field name="employee_id"/>
+                                    <field name="reason"/>
+                                    <field name="exception_until"/>
+                                    <field name="is_valid"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

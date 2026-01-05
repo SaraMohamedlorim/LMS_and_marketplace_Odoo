@@ -1,0 +1,157 @@
+<!-- lms_achievement_views.xml -->
+<odoo>
+    <!-- Achievement Type Views -->
+    <record id="view_lms_achievement_type_tree" model="ir.ui.view">
+        <field name="name">lms.achievement.type.tree</field>
+        <field name="model">lms.achievement.type</field>
+        <field name="arch" type="xml">
+            <tree string="Achievement Types">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="criteria_type"/>
+                <field name="points"/>
+                <field name="total_awards"/>
+                <field name="recent_awards"/>
+                <field name="is_active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_lms_achievement_type_form" model="ir.ui.view">
+        <field name="name">lms.achievement.type.form</field>
+        <field name="model">lms.achievement.type</field>
+        <field name="arch" type="xml">
+            <form string="Achievement Type">
+                <header>
+                    <button name="action_view_awarded_students" type="object" string="View Awarded Students"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_awarded_students" type="object" class="oe_stat_button" icon="fa-users">
+                            <field name="total_awards" widget="statinfo" string="Total Awards"/>
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="sequence"/>
+                            <field name="is_active"/>
+                            <field name="points"/>
+                            <field name="badge_id" widget="many2one"/>
+                        </group>
+                        <group>
+                            <field name="criteria_type"/>
+                            <field name="total_awards" readonly="1"/>
+                            <field name="recent_awards" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description">
+                            <field name="description" nolabel="1"/>
+                        </page>
+                        <page string="Criteria">
+                            <group>
+                                <field name="criteria_type"/>
+                                <field name="required_course_id" attrs="{'invisible': [('criteria_type', '!=', 'course_completion')]}"/>
+                                <field name="required_quiz_id" attrs="{'invisible': [('criteria_type', '!=', 'quiz_score')]}"/>
+                                <field name="min_quiz_score" attrs="{'invisible': [('criteria_type', '!=', 'quiz_score')]}"/>
+                                <field name="min_time_hours" attrs="{'invisible': [('criteria_type', '!=', 'time_spent')]}"/>
+                                <field name="streak_days_required" attrs="{'invisible': [('criteria_type', '!=', 'streak_days')]}"/>
+                                <field name="social_actions_required" attrs="{'invisible': [('criteria_type', '!=', 'social_engagement')]}"/>
+                                <field name="custom_criteria" attrs="{'invisible': [('criteria_type', '!=', 'custom')]}"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Achievement Views -->
+    <record id="view_lms_achievement_tree" model="ir.ui.view">
+        <field name="name">lms.achievement.tree</field>
+        <field name="model">lms.achievement</field>
+        <field name="arch" type="xml">
+            <tree string="Achievements">
+                <field name="student_id"/>
+                <field name="achievement_type_id"/>
+                <field name="award_date"/>
+                <field name="points_awarded"/>
+                <field name="is_notified"/>
+                <field name="is_public"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_lms_achievement_form" model="ir.ui.view">
+        <field name="name">lms.achievement.form</field>
+        <field name="model">lms.achievement</field>
+        <field name="arch" type="xml">
+            <form string="Student Achievement">
+                <header>
+                    <button name="action_notify_student" type="object" string="Notify Student" attrs="{'invisible': [('is_notified', '=', True)]}"/>
+                    <button name="action_share_achievement" type="object" string="Share"/>
+                    <button name="action_view_badge" type="object" string="View Badge"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="student_id"/>
+                            <field name="achievement_type_id"/>
+                            <field name="award_date"/>
+                            <field name="points_awarded"/>
+                        </group>
+                        <group>
+                            <field name="is_notified"/>
+                            <field name="is_public"/>
+                            <field name="badge_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Context">
+                            <group>
+                                <field name="course_id"/>
+                                <field name="quiz_id"/>
+                                <field name="quiz_score"/>
+                                <field name="time_spent"/>
+                                <field name="streak_days"/>
+                            </group>
+                            <field name="context_data" nolabel="1"/>
+                        </page>
+                        <page string="Details">
+                            <field name="achievement_name" readonly="1"/>
+                            <field name="achievement_description" readonly="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+
+
+    <!-- Achievement Type Action -->
+    <record id="action_lms_achievement_type" model="ir.actions.act_window">
+        <field name="name">Achievement Types</field>
+        <field name="res_model">lms.achievement.type</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Define achievement types that can be awarded to students
+            </p>
+        </field>
+    </record>
+
+    <!-- Achievement Action -->
+    <record id="action_lms_achievement" model="ir.actions.act_window">
+        <field name="name">Student Achievements</field>
+        <field name="res_model">lms.achievement</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_group_by_student': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                View and manage student achievements
+            </p>
+        </field>
+    </record>
+</odoo>

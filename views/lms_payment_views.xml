@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Payment Integration Menu -->
+        <menuitem id="menu_lms_payment" 
+                  name="Payment" 
+                  parent="menu_lms_settings"
+                  sequence="50"/>
+                  
+        <!-- Subscriptions Menu -->
+        <menuitem id="menu_lms_subscriptions" 
+                  name="Subscriptions" 
+                  parent="menu_lms_corporate"
+                  sequence="40"/>
+                  
+        <!-- Payouts Menu -->
+        <menuitem id="menu_lms_payouts" 
+                  name="Payouts" 
+                  parent="menu_lms_payment"
+                  sequence="20"/>
+                  
+        <!-- Payment Configuration -->
+        <record id="action_payment_configuration" model="ir.actions.act_window">
+            <field name="name">Payment Configuration</field>
+            <field name="res_model">ir.config_parameter</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('key', 'like', 'lms_%')]</field>
+            <field name="context">{'search_default_payment': 1}</field>
+        </record>
+        
+        <menuitem id="menu_payment_configuration" 
+                  name="Configuration" 
+                  parent="menu_lms_payment"
+                  action="action_payment_configuration"
+                  sequence="10"/>
+                  
+        <!-- Server Actions -->
+        <record id="action_process_refund" model="ir.actions.server">
+            <field name="name">Process Refund</field>
+            <field name="model_id" ref="model_lms_enrollment"/>
+            <field name="state">code</field>
+            <field name="code">
+                if records:
+                    payment = env['lms.payment.integration']
+                    for enrollment in records:
+                        payment.handle_refund(enrollment.id, 'Refund requested by admin')
+            </field>
+        </record>
+        
+        <record id="action_create_subscription" model="ir.actions.server">
+            <field name="name">Create Subscription</field>
+            <field name="model_id" ref="model_res_company"/>
+            <field name="state">code</field>
+            <field name="code">
+                if records:
+                    subscription = env['lms.subscription']
+                    for company in records:
+                        subscription.create_corporate_subscription(company.id, 'professional', 50, 12)
+            </field>
+        </record>
+        
+        <!-- Payouts View -->
+        <record id="view_lms_payout_tree" model="ir.ui.view">
+            <field name="name">lms.payout.tree</field>
+            <field name="model">lms.payout</field>
+            <field name="arch" type="xml">
+                <tree string="Payouts">
+                    <field name="instructor_id"/>
+                    <field name="amount"/>
+                    <field name="currency_id"/>
+                    <field name="status" widget="badge" decoration-success="status=='paid'" decoration-warning="status=='pending'" decoration-danger="status=='failed'"/>
+                    <field name="payout_date"/>
+                    <field name="payout_method"/>
+                    <field name="enrollment_id" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record id="view_lms_payout_form" model="ir.ui.view">
+            <field name="name">lms.payout.form</field>
+            <field name="model">lms.payout</field>
+            <field name="arch" type="xml">
+                <form string="Payout">
+                    <header>
+                        <button name="action_process_payout" type="object" string="Process" states="pending" class="btn-primary"/>
+                        <button name="action_mark_paid" type="object" string="Mark as Paid" states="pending" class="btn-success"/>
+                        <field name="status" widget="statusbar" statusbar_visible="pending,processed,paid,failed"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="instructor_id"/>
+                                <field name="amount"/>
+                                <field name="currency_id"/>
+                                <field name="payout_date"/>
+                            </group>
+                            <group>
+                                <field name="status"/>
+                                <field name="payout_method"/>
+                                <field name="transaction_id"/>
+                                <field name="enrollment_id"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Details">
+                                <field name="notes"/>
+                            </page>
+                            <page string="Transactions">
+                                <field name="transaction_ids" nolabel="1">
+                                    <tree>
+                                        <field name="date"/>
+                                        <field name="amount"/>
+                                        <field name="status"/>
+                                        <field name="reference"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        
+        <!-- Payouts Action -->
+        <record id="action_lms_payout" model="ir.actions.act_window">
+            <field name="name">Instructor Payouts</field>
+            <field name="res_model">lms.payout</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{'search_default_pending': 1}</field>
+        </record>
+        
+        <menuitem id="menu_lms_payouts_list" 
+                  name="All Payouts" 
+                  parent="menu_lms_payouts"
+                  action="action_lms_payout"
+                  sequence="10"/>
+        
+    </data>
+</odoo>

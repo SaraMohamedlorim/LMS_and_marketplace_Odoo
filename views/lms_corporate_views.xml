@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Corporate Management Menu Structure -->
+        <menuitem id="menu_lms_corporate" 
+                  name="Corporate" 
+                  parent="menu_lms_main"
+                  sequence="50"/>
+                  
+        <menuitem id="menu_lms_corporate_management" 
+                  name="Corporate Management" 
+                  parent="menu_lms_corporate"
+                  sequence="10"/>
+                  
+        <!-- Corporate Reports -->
+        <record id="action_corporate_training_report" model="ir.actions.act_window">
+            <field name="name">Training Reports</field>
+            <field name="res_model">lms.corporate</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="binding_model_id" ref="model_res_company"/>
+            <field name="binding_view_types">list,form</field>
+        </record>
+        
+        <menuitem id="menu_corporate_reports" 
+                  name="Training Reports" 
+                  parent="menu_lms_corporate_management"
+                  action="action_corporate_training_report"
+                  sequence="20"/>
+                  
+        <!-- Compliance Tracking -->
+        <record id="action_compliance_tracking" model="ir.actions.act_window">
+            <field name="name">Compliance Tracking</field>
+            <field name="res_model">lms.compliance.tracking</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="binding_model_id" ref="model_lms_compliance_rule"/>
+            <field name="binding_view_types">list,form</field>
+        </record>
+        
+        <menuitem id="menu_compliance_tracking" 
+                  name="Compliance" 
+                  parent="menu_lms_corporate_management"
+                  action="action_compliance_tracking"
+                  sequence="30"/>
+                  
+        <!-- Bulk Enrollment Action -->
+        <record id="action_bulk_enrollment" model="ir.actions.act_window">
+            <field name="name">Bulk Enrollment</field>
+            <field name="res_model">lms.corporate</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="binding_model_id" ref="model_res_company"/>
+            <field name="binding_view_types">form</field>
+        </record>
+        
+        <!-- HR Sync Action -->
+        <record id="action_sync_hr_employees" model="ir.actions.server">
+            <field name="name">Sync HR Employees</field>
+            <field name="model_id" ref="model_res_company"/>
+            <field name="state">code</field>
+            <field name="code">
+                if records:
+                    corporate = env['lms.corporate']
+                    for company in records:
+                        result = corporate.sync_hr_employees(company.id)
+                        # Show notification with results
+            </field>
+        </record>
+        
+    </data>
+</odoo>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Main LMS Menu -->
+    <menuitem id="menu_lms_root" name="LMS" sequence="10"/>
+    
+    <!-- Courses Management -->
+    <menuitem id="menu_lms_courses" name="Courses" parent="menu_lms_root" sequence="10"
+              action="action_lms_course"/>
+    <menuitem id="menu_lms_categories" name="Categories" parent="menu_lms_courses" sequence="20"
+              action="action_lms_category"/>
+    <menuitem id="menu_lms_tags" name="Tags" parent="menu_lms_courses" sequence="30"
+              action="action_lms_tag"/>
+
+    <!-- Learning Management -->
+    <menuitem id="menu_lms_learning" name="Learning" parent="menu_lms_root" sequence="20"/>
+    <menuitem id="menu_lms_enrollments" name="Enrollments" parent="menu_lms_learning" sequence="10"
+              action="action_lms_enrollment"/>
+    <menuitem id="menu_lms_modules" name="Modules" parent="menu_lms_learning" sequence="20"
+              action="action_lms_module"/>
+    <menuitem id="menu_lms_content" name="Content" parent="menu_lms_learning" sequence="30"
+              action="action_lms_content"/>
+
+    <menuitem id="menu_lms_achievements" name="Achievements" parent="menu_lms_main" sequence="40"/>
+    
+    <menuitem id="menu_lms_achievement_types" 
+              name="Achievement Types" 
+              parent="menu_lms_achievements" 
+              action="action_lms_achievement_type" 
+              sequence="10"/>
+    
+    <menuitem id="menu_lms_student_achievements" 
+              name="Student Achievements" 
+              parent="menu_lms_achievements" 
+              action="action_lms_achievement" 
+              sequence="20"/>
+
+    <!-- Assessments -->
+    <menuitem id="menu_lms_assessments" name="Assessments" parent="menu_lms_root" sequence="30"/>
+    <menuitem id="menu_lms_quizzes" name="Quizzes" parent="menu_lms_assessments" sequence="10"
+              action="action_lms_quiz"/>
+    <menuitem id="menu_lms_quiz_attempts" name="Quiz Attempts" parent="menu_lms_assessments" sequence="20"
+              action="action_lms_quiz_attempt"/>
+
+    <!-- Certification -->
+    <menuitem id="menu_lms_certification" name="Certification" parent="menu_lms_root" sequence="40"/>
+    <menuitem id="menu_lms_certificates" name="Certificates" parent="menu_lms_certification" sequence="10"
+              action="action_lms_certificate"/>
+    <menuitem id="menu_lms_certificate_templates" name="Certificate Templates" parent="menu_lms_certification" sequence="20"
+              action="action_lms_certificate_template"/>
+
+    <!-- Marketplace -->
+    <menuitem id="menu_lms_marketplace" name="Marketplace" parent="menu_lms_root" sequence="50"/>
+    <menuitem id="menu_lms_instructors" name="Instructors" parent="menu_lms_marketplace" sequence="10"
+              action="action_lms_instructor"/>
+    <menuitem id="menu_lms_payouts" name="Payouts" parent="menu_lms_marketplace" sequence="20"
+              action="action_lms_payout"/>
+
+    <!-- Analytics -->
+    <menuitem id="menu_lms_analytics" name="Analytics" parent="menu_lms_root" sequence="60"
+              action="action_lms_analytics"/>
+
+    <!-- Configuration -->
+    <menuitem id="menu_lms_configuration" name="Configuration" parent="menu_lms_root" sequence="70"/>
+    <menuitem id="menu_lms_settings" name="Settings" parent="menu_lms_configuration" sequence="10"
+              action="action_lms_settings"/>
+
+    <!-- Actions for menus that don't have explicit actions defined -->
+    <record id="action_lms_category" model="ir.actions.act_window">
+        <field name="name">Categories</field>
+        <field name="res_model">lms.category</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="action_lms_tag" model="ir.actions.act_window">
+        <field name="name">Tags</field>
+        <field name="res_model">lms.tag</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="action_lms_content" model="ir.actions.act_window">
+        <field name="name">Content</field>
+        <field name="res_model">lms.content</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="action_lms_certificate_template" model="ir.actions.act_window">
+        <field name="name">Certificate Templates</field>
+        <field name="res_model">lms.certificate.template</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="action_lms_settings" model="ir.actions.act_window">
+        <field name="name">LMS Settings</field>
+        <field name="res_model">lms.marketplace.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+        <field name="view_id" ref="view_lms_marketplace_settings_form"/>
+    </record>
+</odoo>

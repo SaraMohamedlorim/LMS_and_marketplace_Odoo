@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Module Tree View -->
+    <record id="view_lms_module_tree" model="ir.ui.view">
+        <field name="name">lms.module.tree</field>
+        <field name="model">lms.module</field>
+        <field name="arch" type="xml">
+            <tree default_order="sequence">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="course_id"/>
+                <field name="duration" string="Duration (hrs)"/>
+                <field name="is_preview"/>
+                <field name="completion_rule"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Module Form View -->
+    <record id="view_lms_module_form" model="ir.ui.view">
+        <field name="name">lms.module.form</field>
+        <field name="model">lms.module</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="course_id" options="{'no_create': True}"/>
+                            <field name="sequence"/>
+                            <field name="is_preview"/>
+                        </group>
+                        <group>
+                            <field name="duration" string="Duration (hours)" readonly="1"/>
+                            <field name="completion_rule"/>
+                        </group>
+                    </group>
+                    <field name="description"/>
+                    
+                    <label for="prerequisite_module_ids" string="Prerequisites"/>
+                    <field name="prerequisite_module_ids" widget="many2many_tags"/>
+                    
+                    <notebook>
+                        <page string="Contents">
+                            <field name="contents" mode="tree,form">
+                                <tree editable="bottom" default_order="sequence" create="false">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="content_type"/>
+                                    <field name="duration" string="Duration (min)"/>
+                                    <field name="is_preview"/>
+                                    <field name="is_published"/>
+                                    <field name="completion_rule"/>
+                                </tree>
+                                <form>
+                                    <field name="name"/>
+                                    <field name="content_type"/>
+                                    <field name="sequence"/>
+                                    <field name="duration"/>
+                                    <field name="is_preview"/>
+                                    <field name="is_published"/>
+                                    <field name="completion_rule"/>
+                                    <field name="min_view_duration"/>
+                                </form>
+                            </field>
+                        </page>
+                        
+                        <page string="Quizzes">
+                            <field name="quiz_ids" mode="tree,form">
+                                <tree editable="bottom">
+                                    <field name="name"/>
+                                    <field name="passing_score" string="Passing %"/>
+                                    <field name="time_limit" string="Time Limit (min)"/>
+                                    <field name="max_attempts"/>
+                                    <field name="question_count"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Module Action -->
+    <record id="action_lms_module" model="ir.actions.act_window">
+        <field name="name">Modules</field>
+        <field name="res_model">lms.module</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

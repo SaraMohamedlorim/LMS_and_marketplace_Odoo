@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ========================================================= -->
+        <!-- Form View Extension: LMS Tab + Badges -->
+        <!-- ========================================================= -->
+        <record id="view_partner_form_lms" model="ir.ui.view">
+            <field name="name">res.partner.form.lms</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+
+                <!-- LMS TAB -->
+                <xpath expr="//notebook/page[@name='internal_notes']" position="before">
+                    <page string="LMS">
+                        <group>
+                            <group string="LMS Profile">
+                                <field name="is_learner"/>
+                                <field name="is_instructor"/>
+                                <field name="lms_points" readonly="1"/>
+                                <field name="lms_level" readonly="1"/>
+                                <field name="last_learning_date" readonly="1"/>
+                            </group>
+
+                            <group string="Enrollments" colspan="2">
+                                <field name="enrollment_ids" nolabel="1">
+                                    <tree>
+                                        <field name="course_id"/>
+                                        <field name="state"/>
+                                        <field name="progress" widget="progressbar"/>
+                                        <field name="score"/>
+                                    </tree>
+                                </field>
+                            </group>
+
+                            <group string="Certificates" colspan="2">
+                                <field name="certificate_ids" nolabel="1">
+                                    <tree>
+                                        <field name="course_id"/>
+                                        <field name="issue_date"/>
+                                        <field name="certificate_number"/>
+                                    </tree>
+                                </field>
+                            </group>
+
+                            <group string="Achievements" colspan="2">
+                                <field name="achievement_ids" nolabel="1">
+                                    <tree>
+                                        <field name="achievement_type_id"/>
+                                        <field name="award_date"/>
+                                        <field name="points_awarded"/>
+                                    </tree>
+                                </field>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+
+                <!-- BUTTON BOX (BADGES) -->
+                <xpath expr="//div[@name='button_box']" position="inside">
+
+                    <button name="action_mark_as_learner"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-graduation-cap"
+                           invisible="is_learner">
+                        <div class="o_stat_info">
+                            <span class="o_stat_text">Mark as Learner</span>
+                        </div>
+                    </button>
+
+                    <button name="action_mark_as_instructor"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-user-md"
+                            invisible="is_instructor">
+                        <div class="o_stat_info">
+                            <span class="o_stat_text">Mark as Instructor</span>
+                        </div>
+                    </button>
+
+                    <button name="action_view_lms_points"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-star"
+                             invisible="lms_points &lt;= 0">
+                        <field name="lms_points" widget="statinfo"/>
+                        <div class="o_stat_info">
+                            <span class="o_stat_text">Level</span>
+                            <span class="o_stat_value">
+                                <field name="lms_level"/>
+                            </span>
+                        </div>
+                    </button>
+
+                </xpath>
+
+            </field>
+        </record>
+
+        <!-- ========================================================= -->
+        <!-- Tree View -->
+        <!-- ========================================================= -->
+        <record id="view_partner_tree_lms" model="ir.ui.view">
+            <field name="name">res.partner.tree.lms</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_tree"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='email']" position="after">
+                    <field name="lms_points"/>
+                    <field name="lms_level"/>
+                </xpath>
+
+            </field>
+        </record>
+
+        <!-- ========================================================= -->
+        <!-- Search View -->
+        <!-- ========================================================= -->
+        <record id="view_partner_search_lms" model="ir.ui.view">
+            <field name="name">res.partner.search.lms</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <search string="Students">
+                    
+                    <field name="name"/>
+                    <field name="email"/>
+                    
+                    <filter name="learners"
+                            string="Learners"
+                            domain="[('is_learner','=',True)]"/>
+
+                    <filter name="instructors"
+                            string="Instructors"
+                            domain="[('is_instructor','=',True)]"/>
+
+                    <separator/>
+
+                    <group expand="0" string="Group By">
+                        <filter name="group_company"
+                                string="Company"
+                                context="{'group_by':'company_id'}"/>
+                    </group>
+
+                </search>
+            </field>
+        </record>
+
+
+        <!-- ========================================================= -->
+        <!-- KANBAN VIEW (LMS PROFESSIONAL) -->
+        <!-- ========================================================= -->
+        <record id="view_partner_kanban_lms" model="ir.ui.view">
+            <field name="name">res.partner.kanban.lms</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_small_column">
+                    <field name="name"/>
+                    <field name="lms_points"/>
+                    <field name="lms_level"/>
+                    <field name="is_learner"/>
+                    <field name="is_instructor"/>
+
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_card">
+
+                                <strong>
+                                    <field name="name"/>
+                                </strong>
+
+                                <div class="mt8">
+                                    <span class="badge badge-primary"
+                                          t-if="record.is_learner.raw_value">
+                                        Learner
+                                    </span>
+                                    <span class="badge badge-success"
+                                          t-if="record.is_instructor.raw_value">
+                                        Instructor
+                                    </span>
+                                </div>
+
+                                <div class="mt8">
+                                    <div>Level: <field name="lms_level"/></div>
+                                    <div>Points: <field name="lms_points"/></div>
+                                </div>
+
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- ========================================================= -->
+        <!-- ACTION -->
+        <!-- ========================================================= -->
+        <record id="action_lms_learners" model="ir.actions.act_window">
+            <field name="name">LMS Learners</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="domain">[('is_learner', '=', True)]</field>
+        </record>
+
+        <!-- ========================================================= -->
+        <!-- MENU -->
+        <!-- ========================================================= -->
+        <menuitem id="menu_lms_root" name="LMS"/>
+        <menuitem id="menu_lms_learners"
+                  name="Learners"
+                  parent="menu_lms_root"
+                  action="action_lms_learners"/>
+
+    </data>
+</odoo>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Gamification Badges -->
+        <record id="badge_course_completion" model="gamification.badge">
+            <field name="name">Course Master</field>
+            <field name="description">Completed your first course</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="badge_perfect_score" model="gamification.badge">
+            <field name="name">Perfect Score</field>
+            <field name="description">Achieved 100% on a quiz</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="badge_fast_learner" model="gamification.badge">
+            <field name="name">Fast Learner</field>
+            <field name="description">Completed a course in record time</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="badge_week_streak" model="gamification.badge">
+            <field name="name">Weekly Warrior</field>
+            <field name="description">Completed lessons for 7 consecutive days</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="badge_social_learner" model="gamification.badge">
+            <field name="name">Social Learner</field>
+            <field name="description">Participated in course discussions</field>
+            <field name="active">True</field>
+        </record>
+
+        <!-- Achievement Types -->
+        <record id="achievement_course_completion" model="lms.achievement.type">
+            <field name="name">Course Completion</field>
+            <field name="points">100</field>
+            <field name="badge_id" ref="badge_course_completion"/>
+        </record>
+
+        <record id="achievement_perfect_quiz" model="lms.achievement.type">
+            <field name="name">Perfect Quiz</field>
+            <field name="points">50</field>
+            <field name="badge_id" ref="badge_perfect_score"/>
+        </record>
+
+        <record id="achievement_fast_learner" model="lms.achievement.type">
+            <field name="name">Fast Learner</field>
+            <field name="points">75</field>
+            <field name="badge_id" ref="badge_fast_learner"/>
+        </record>
+
+        <!-- Level Thresholds -->
+        <record id="level_beginner" model="lms.level">
+            <field name="name">Beginner</field>
+            <field name="level_number">1</field>
+            <field name="points_required">0</field>
+        </record>
+
+        <record id="level_intermediate" model="lms.level">
+            <field name="name">Intermediate</field>
+            <field name="level_number">2</field>
+            <field name="points_required">100</field>
+        </record>
+
+        <record id="level_advanced" model="lms.level">
+            <field name="name">Advanced</field>
+            <field name="level_number">3</field>
+            <field name="points_required">300</field>
+        </record>
+
+        <record id="level_expert" model="lms.level">
+            <field name="name">Expert</field>
+            <field name="level_number">4</field>
+            <field name="points_required">600</field>
+        </record>
+
+        <record id="level_master" model="lms.level">
+            <field name="name">Master</field>
+            <field name="level_number">5</field>
+            <field name="points_required">1000</field>
+        </record>
+    </data>
+</odoo>

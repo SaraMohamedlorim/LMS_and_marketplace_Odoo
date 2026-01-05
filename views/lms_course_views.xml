@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Course Tree View -->
+    <record id="view_lms_course_tree" model="ir.ui.view">
+        <field name="name">lms.course.tree</field>
+        <field name="model">lms.course</field>
+        <field name="arch" type="xml">
+            <tree decoration-success="published==True" decoration-muted="published==False" default_order="sequence">
+                <field name="sequence" widget="handle"/>
+                <field name="image" widget="image" class="o_field_image_small"/>
+                <field name="name"/>
+                <field name="instructor_id"/>
+                <field name="category_id"/>
+                <field name="level"/>
+                <field name="price" widget="monetary"/>
+                <field name="published" invisible="1"/>
+                <field name="current_students"/>
+                <field name="rating_avg" widget="percentpie"/>
+                <field name="total_modules"/>
+                <field name="duration" string="Duration (hrs)"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Course Form View -->
+    <record id="view_lms_course_form" model="ir.ui.view">
+        <field name="name">lms.course.form</field>
+        <field name="model">lms.course</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_publish" type="object" string="Publish" 
+                            class="btn-primary" attrs="{'invisible': [('published','=',True)]}"/>
+                    <button name="action_unpublish" type="object" string="Unpublish" 
+                            class="btn-secondary" attrs="{'invisible': [('published','=',False)]}"/>
+                    <button name="action_view_enrollments" type="object" string="View Enrollments" 
+                            class="btn-default"/>
+                    <field name="published" widget="boolean_button" options='{"terminology": "published"}'/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" placeholder="Course Title"/>
+                            <field name="subtitle" placeholder="Brief subtitle describing the course"/>
+                            <field name="instructor_id" options="{'no_create': True}"/>
+                            <field name="category_id"/>
+                            <field name="tags" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                        </group>
+                        <group>
+                            <field name="image" widget="image" class="oe_avatar"/>
+                            <field name="price" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            <field name="discount_price" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            <field name="is_free" invisible="1"/>
+                            <field name="level"/>
+                            <field name="language"/>
+                            <field name="max_students"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Course Media">
+                        <field name="promotional_video" placeholder="YouTube or Vimeo URL" widget="url"/>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Description">
+                            <group>
+                                <field name="short_description" placeholder="Brief description for course listings" nolabel="1"/>
+                                <field name="description" nolabel="1"/>
+                            </group>
+                        </page>
+                        
+                        <page string="Curriculum" attrs="{'invisible': [('id', '=', False)]}">
+                            <field name="modules" mode="tree,form">
+                                <tree editable="bottom" default_order="sequence">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="duration" string="Duration (hrs)"/>
+                                    <field name="is_preview"/>
+                                    <field name="completion_rule"/>
+                                </tree>
+                                <form>
+                                    <group>
+                                        <group>
+                                            <field name="name"/>
+                                            <field name="sequence"/>
+                                            <field name="is_preview"/>
+                                            <field name="completion_rule"/>
+                                        </group>
+                                        <group>
+                                            <field name="duration" string="Duration (hours)"/>
+                                            <field name="prerequisite_module_ids" widget="many2many_tags"/>
+                                        </group>
+                                    </group>
+                                    <field name="description"/>
+                                    <field name="contents" mode="tree,form">
+                                        <tree editable="bottom" default_order="sequence" string="Course Contents">
+                                            <field name="sequence" widget="handle"/>
+                                            <field name="name"/>
+                                            <field name="content_type"/>
+                                            <field name="duration" string="Duration (min)"/>
+                                            <field name="is_preview"/>
+                                            <field name="is_published"/>
+                                        </tree>
+                                    </field>
+                                </form>
+                            </field>
+                        </page>
+                        
+                        <page string="Requirements & Outcomes">
+                            <group>
+                                <group string="Requirements">
+                                    <field name="requirements" nolabel="1"/>
+                                </group>
+                                <group string="Learning Outcomes">
+                                    <field name="learning_outcomes" nolabel="1"/>
+                                </group>
+                            </group>
+                            <group string="Target Audience">
+                                <field name="target_audience" nolabel="1"/>
+                            </group>
+                        </page>
+                        
+                        <page string="Certification">
+                            <group>
+                                <field name="certificate_template"/>
+                                <field name="require_passing" attrs="{'invisible': [('certificate_template', '=', False)]}"/>
+                            </group>
+                        </page>
+                        
+                        <page string="Settings">
+                            <group>
+                                <group string="Access Control">
+                                    <field name="corporate_only"/>
+                                    <field name="allowed_companies" widget="many2many_tags" attrs="{'invisible': [('corporate_only', '=', False)]}"/>
+                                </group>
+                                <group string="Advanced">
+                                    <field name="scorm_package" filename="scorm_file_name"/>
+                                    <field name="scorm_file_name" invisible="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Analytics">
+                            <div class="o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="current_students" readonly="1"/>
+                                </span>
+                                <span class="o_stat_text">Current Students</span>
+                            </div>
+                            <div class="o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="rating_avg" widget="float_time" readonly="1"/>
+                                </span>
+                                <span class="o_stat_text">Average Rating</span>
+                            </div>
+                            <div class="o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="total_modules" readonly="1"/>
+                                </span>
+                                <span class="o_stat_text">Total Modules</span>
+                            </div>
+                            <div class="o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="duration" readonly="1"/>
+                                </span>
+                                <span class="o_stat_text">Total Duration (hours)</span>
+                            </div>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Course Search View -->
+    <record id="view_lms_course_search" model="ir.ui.view">
+        <field name="name">lms.course.search</field>
+        <field name="model">lms.course</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="instructor_id"/>
+                <field name="category_id"/>
+                <field name="tags"/>
+                <filter string="Published" name="published" domain="[('published','=',True)]"/>
+                <filter string="Draft" name="draft" domain="[('published','=',False)]"/>
+                <filter string="Free Courses" name="free" domain="[('is_free','=',True)]"/>
+                <filter string="Corporate Only" name="corporate" domain="[('corporate_only','=',True)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Category" name="category" context="{'group_by': 'category_id'}"/>
+                    <filter string="Instructor" name="instructor" context="{'group_by': 'instructor_id'}"/>
+                    <filter string="Level" name="level" context="{'group_by': 'level'}"/>
+                    <filter string="Language" name="language" context="{'group_by': 'language'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Course Action -->
+    <record id="action_lms_course" model="ir.actions.act_window">
+        <field name="name">Courses</field>
+        <field name="res_model">lms.course</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_published': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first course!
+            </p>
+            <p>
+                Courses are the main learning units in your LMS. Each course contains
+                modules and various types of content like videos, documents, and quizzes.
+            </p>
+        </field>
+    </record>
+
+    <!-- Category Views -->
+    <record id="view_lms_category_tree" model="ir.ui.view">
+        <field name="name">lms.category.tree</field>
+        <field name="model">lms.category</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="parent_id"/>
+                <field name="course_count"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_lms_category_form" model="ir.ui.view">
+        <field name="name">lms.category.form</field>
+        <field name="model">lms.category</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="parent_id"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="image" widget="image" class="oe_avatar"/>
+                            <field name="course_count" readonly="1"/>
+                        </group>
+                    </group>
+                    <field name="description"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Tag Views -->
+    <record id="view_lms_tag_tree" model="ir.ui.view">
+        <field name="name">lms.tag.tree</field>
+        <field name="model">lms.tag</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="color" widget="color"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_lms_tag_form" model="ir.ui.view">
+        <field name="name">lms.tag.form</field>
+        <field name="model">lms.tag</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="color" widget="color"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

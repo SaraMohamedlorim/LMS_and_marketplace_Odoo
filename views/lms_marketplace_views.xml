@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Instructor Tree View -->
+    <record id="view_lms_instructor_tree" model="ir.ui.view">
+        <field name="name">lms.instructor.tree</field>
+        <field name="model">lms.instructor</field>
+        <field name="arch" type="xml">
+            <tree decoration-success="is_verified==True">
+                <field name="name"/>
+                <field name="total_courses"/>
+                <field name="total_students"/>
+                <field name="average_rating" widget="float_time"/>
+                <field name="total_earnings" widget="monetary"/>
+                <field name="is_verified"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Instructor Form View -->
+    <record id="view_lms_instructor_form" model="ir.ui.view">
+        <field name="name">lms.instructor.form</field>
+        <field name="model">lms.instructor</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="is_verified"/>
+                            <field name="expertise" widget="many2many_tags"/>
+                        </group>
+                        <group>
+                            <field name="total_courses" readonly="1"/>
+                            <field name="total_students" readonly="1"/>
+                            <field name="average_rating" widget="float_time" readonly="1"/>
+                        </group>
+                    </group>
+                    
+                    <field name="bio" nolabel="1"/>
+                    
+                    <notebook>
+                        <page string="Payout Information">
+                            <group>
+                                <group>
+                                    <field name="payout_method"/>
+                                    <field name="payout_email" attrs="{'invisible': [('payout_method', '!=', 'paypal')]}"/>
+                                    <field name="bank_account" attrs="{'invisible': [('payout_method', '!=', 'bank_transfer')]}"/>
+                                </group>
+                                <group>
+                                    <field name="total_earnings" widget="monetary" readonly="1"/>
+                                    <field name="available_balance" widget="monetary" readonly="1"/>
+                                    <field name="pending_balance" widget="monetary" readonly="1"/>
+                                    <button name="action_request_payout" type="object" string="Request Payout" 
+                                            class="btn-primary" attrs="{'invisible': [('available_balance', '&lt;=', 0)]}"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Courses">
+                            <field name="courses" mode="tree">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="published"/>
+                                    <field name="price" widget="monetary"/>
+                                    <field name="current_students"/>
+                                    <field name="rating_avg" widget="float_time"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Payout Tree View -->
+    <record id="view_lms_payout_tree" model="ir.ui.view">
+        <field name="name">lms.payout.tree</field>
+        <field name="model">lms.payout</field>
+        <field name="arch" type="xml">
+            <tree decoration-success="status=='completed'" decoration-warning="status=='processing'" decoration-muted="status=='requested'">
+                <field name="instructor_id"/>
+                <field name="amount" widget="monetary"/>
+                <field name="payout_method"/>
+                <field name="status"/>
+                <field name="request_date"/>
+                <field name="complete_date"/>
+                <field name="transaction_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Payout Form View -->
+    <record id="view_lms_payout_form" model="ir.ui.view">
+        <field name="name">lms.payout.form</field>
+        <field name="model">lms.payout</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="instructor_id" readonly="1"/>
+                            <field name="amount" widget="monetary" readonly="1"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="payout_method" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="status"/>
+                            <field name="request_date" readonly="1"/>
+                            <field name="process_date"/>
+                            <field name="complete_date"/>
+                        </group>
+                    </group>
+                    
+                    <field name="transaction_id" placeholder="Payment gateway transaction ID"/>
+                    <field name="notes"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Marketplace Settings -->
+    <record id="view_lms_marketplace_settings_form" model="ir.ui.view">
+        <field name="name">lms.marketplace.settings.form</field>
+        <field name="model">lms.marketplace.settings</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group string="Revenue Sharing">
+                        <field name="revenue_share_percentage"/>
+                        <field name="instructor_payout_delay" string="Payout Delay (days)"/>
+                        <field name="minimum_payout_amount" widget="monetary"/>
+                    </group>
+                    
+                    <group string="Instructor Settings">
+                        <field name="allow_instructor_registration"/>
+                        <field name="automatic_payouts"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Actions -->
+    <record id="action_lms_instructor" model="ir.actions.act_window">
+        <field name="name">Instructors</field>
+        <field name="res_model">lms.instructor</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="action_lms_payout" model="ir.actions.act_window">
+        <field name="name">Payouts</field>
+        <field name="res_model">lms.payout</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

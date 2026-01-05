@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Content Form View -->
+    <record id="view_lms_content_form" model="ir.ui.view">
+        <field name="name">lms.content.form</field>
+        <field name="model">lms.content</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="module_id" options="{'no_create': True}"/>
+                            <field name="content_type"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="duration" string="Duration (minutes)"/>
+                            <field name="is_preview"/>
+                            <field name="is_published"/>
+                            <field name="completion_rule"/>
+                            <field name="min_view_duration" attrs="{'invisible': [('completion_rule', '!=', 'duration')]}"/>
+                        </group>
+                    </group>
+                    
+                    <group attrs="{'invisible': [('content_type', 'not in', ['video'])]}">
+                        <group string="Video Settings">
+                            <field name="video_source"/>
+                            <field name="video_url" attrs="{'invisible': [('video_source', 'in', ['html5', 's3'])]}"/>
+                            <field name="video_file" filename="video_filename" 
+                                   attrs="{'invisible': [('video_source', 'not in', ['html5', 's3'])]}"/>
+                            <field name="video_filename" invisible="1"/>
+                        </group>
+                    </group>
+                    
+                    <group attrs="{'invisible': [('content_type', '!=', 'pdf')]}">
+                        <field name="document_file" filename="document_filename"/>
+                        <field name="document_filename" invisible="1"/>
+                    </group>
+                    
+                    <group attrs="{'invisible': [('content_type', '!=', 'text')]}">
+                        <field name="text_content" nolabel="1"/>
+                    </group>
+                    
+                    <group attrs="{'invisible': [('content_type', '!=', 'url')]}">
+                        <field name="external_url" widget="url"/>
+                    </group>
+                    
+                    <group attrs="{'invisible': [('content_type', '!=', 'scorm')]}">
+                        <field name="scorm_file" filename="scorm_filename"/>
+                        <field name="scorm_filename" invisible="1"/>
+                    </group>
+                    
+                    <group attrs="{'invisible': [('content_type', '!=', 'quiz')]}">
+                        <field name="quiz_id" options="{'no_create': True, 'no_open': True}"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Content Tree View -->
+    <record id="view_lms_content_tree" model="ir.ui.view">
+        <field name="name">lms.content.tree</field>
+        <field name="model">lms.content</field>
+        <field name="arch" type="xml">
+            <tree default_order="sequence">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="module_id"/>
+                <field name="content_type"/>
+                <field name="duration"/>
+                <field name="is_preview"/>
+                <field name="is_published"/>
+            </tree>
+        </field>
+    </record>
+</odoo>

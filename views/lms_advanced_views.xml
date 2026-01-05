@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- SCORM Integration Menu -->
+        <menuitem id="menu_lms_scorm" 
+                  name="SCORM" 
+                  parent="menu_lms_settings"
+                  sequence="30"/>
+                  
+        <!-- Zoom Integration Menu -->
+        <menuitem id="menu_lms_zoom" 
+                  name="Zoom" 
+                  parent="menu_lms_settings"
+                  sequence="40"/>
+                  
+        <!-- Adaptive Learning Menu -->
+        <menuitem id="menu_lms_adaptive" 
+                  name="Adaptive Learning" 
+                  parent="menu_lms_reports"
+                  sequence="20"/>
+                  
+        <!-- Proctoring Menu -->
+        <menuitem id="menu_lms_proctoring" 
+                  name="Proctoring" 
+                  parent="menu_lms_quizzes"
+                  sequence="40"/>
+                  
+        <!-- Gamification Menu -->
+        <menuitem id="menu_lms_gamification" 
+                  name="Gamification" 
+                  parent="menu_lms_main"
+                  sequence="80"/>
+                  
+        <!-- Leaderboard Action -->
+        <record id="action_lms_leaderboard" model="ir.actions.act_window">
+            <field name="name">Learning Leaderboard</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="domain">[('lms_points', '>', 0)]</field>
+            <field name="context">{'search_default_leaderboard': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No leaderboard data yet. Students earn points by completing courses and achievements.
+                </p>
+            </field>
+        </record>
+        
+        <menuitem id="menu_lms_leaderboard" 
+                  name="Leaderboard" 
+                  parent="menu_lms_gamification"
+                  action="action_lms_leaderboard"
+                  sequence="10"/>
+                  
+        <!-- Server Actions -->
+        <record id="action_enable_ai_proctoring" model="ir.actions.server">
+            <field name="name">Enable AI Proctoring</field>
+            <field name="model_id" ref="model_lms_quiz"/>
+            <field name="state">code</field>
+            <field name="code">
+                if records:
+                    proctoring = env['lms.proctoring']
+                    for quiz in records:
+                        proctoring.enable_proctoring(quiz.id, 'ai_proctoring')
+            </field>
+        </record>
+        
+        <record id="action_generate_recommendations" model="ir.actions.server">
+            <field name="name">Generate Recommendations</field>
+            <field name="model_id" ref="model_res_partner"/>
+            <field name="state">code</field>
+            <field name="code">
+                if records:
+                    adaptive = env['lms.adaptive.learning']
+                    for student in records:
+                        recommendations = adaptive.get_recommendations(student.id, 5)
+                        # Process recommendations
+            </field>
+        </record>
+        
+    </data>
+</odoo>

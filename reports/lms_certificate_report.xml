@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_lms_certificate">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <div class="page">
+                    <div class="certificate-container">
+                        <div class="certificate-header">
+                            <h1>Certificate of Completion</h1>
+                            <p class="subtitle">This is to certify that</p>
+                        </div>
+                        
+                        <div class="student-name">
+                            <t t-esc="doc.student_id.name"/>
+                        </div>
+                        
+                        <div class="course-info">
+                            <p>has successfully completed the course</p>
+                            <h2 t-esc="doc.course_id.name"/>
+                            <p>with a final score of <span t-esc="'%.1f' % doc.score"/>%</p>
+                        </div>
+                        
+                        <div class="certificate-details">
+                            <div class="row">
+                                <div class="col-6">
+                                    <p><strong>Certificate Number:</strong></p>
+                                    <p t-esc="doc.certificate_number"/>
+                                </div>
+                                <div class="col-6">
+                                    <p><strong>Issue Date:</strong></p>
+                                    <p t-esc="doc.issue_date"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <p><strong>Grade:</strong></p>
+                                    <p t-esc="doc.grade"/>
+                                </div>
+                                <div class="col-6">
+                                    <p><strong>Expiry Date:</strong></p>
+                                    <p t-esc="doc.expiry_date or 'No Expiry'"/>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="verification-section">
+                            <p>Verify this certificate at:</p>
+                            <p t-esc="'%s/lms/certificate/verify/%s' % (base_url, doc.verification_hash)"/>
+                        </div>
+                        
+                        <div class="signature-section">
+                            <div class="signature">
+                                <div class="signature-line"></div>
+                                <p>Authorized Signature</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_lms_certificate_modern">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <div class="page" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px;">
+                    <div class="certificate-modern" style="background: white; border-radius: 20px; padding: 60px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); min-height: 800px; position: relative;">
+                        
+                        <!-- Watermark -->
+                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.05; font-size: 120px; color: #333; z-index: 1;">
+                            CERTIFIED
+                        </div>
+                        
+                        <!-- Content -->
+                        <div style="position: relative; z-index: 2;">
+                            <!-- Header -->
+                            <div style="text-align: center; margin-bottom: 40px;">
+                                <h1 style="color: #2c3e50; font-size: 48px; margin-bottom: 10px; font-weight: bold;">CERTIFICATE</h1>
+                                <p style="color: #7f8c8d; font-size: 18px;">OF ACHIEVEMENT</p>
+                            </div>
+                            
+                            <!-- Awarded To -->
+                            <div style="text-align: center; margin: 40px 0;">
+                                <p style="color: #7f8c8d; font-size: 16px; margin-bottom: 10px;">This certificate is proudly presented to</p>
+                                <h2 style="color: #2c3e50; font-size: 42px; margin: 20px 0; font-weight: bold; border-bottom: 2px solid #3498db; padding-bottom: 20px; display: inline-block;">
+                                    <t t-esc="doc.student_id.name"/>
+                                </h2>
+                            </div>
+                            
+                            <!-- Course Info -->
+                            <div style="text-align: center; margin: 40px 0;">
+                                <p style="color: #7f8c8d; font-size: 16px;">for successfully completing</p>
+                                <h3 style="color: #34495e; font-size: 28px; margin: 20px 0; font-style: italic;">
+                                    <t t-esc="doc.course_id.name"/>
+                                </h3>
+                                <p style="color: #7f8c8d; font-size: 16px;">with distinction</p>
+                            </div>
+                            
+                            <!-- Performance -->
+                            <div style="text-align: center; margin: 40px 0;">
+                                <div style="display: inline-block; background: #ecf0f1; padding: 20px 40px; border-radius: 10px;">
+                                    <p style="margin: 5px 0; color: #2c3e50;">
+                                        <strong>Final Score:</strong> <span style="color: #27ae60;" t-esc="'%.1f' % doc.score"/>%
+                                    </p>
+                                    <p style="margin: 5px 0; color: #2c3e50;">
+                                        <strong>Grade:</strong> <span style="color: #e74c3c;" t-esc="doc.grade"/>
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <!-- Details -->
+                            <div style="display: flex; justify-content: space-between; margin: 60px 0 40px 0;">
+                                <div style="text-align: center;">
+                                    <p style="color: #7f8c8d; margin-bottom: 5px;">Certificate ID</p>
+                                    <p style="color: #2c3e50; font-weight: bold;" t-esc="doc.certificate_number"/>
+                                </div>
+                                <div style="text-align: center;">
+                                    <p style="color: #7f8c8d; margin-bottom: 5px;">Date Issued</p>
+                                    <p style="color: #2c3e50; font-weight: bold;" t-esc="doc.issue_date"/>
+                                </div>
+                                <div style="text-align: center;">
+                                    <p style="color: #7f8c8d; margin-bottom: 5px;">Valid Until</p>
+                                    <p style="color: #2c3e50; font-weight: bold;" t-esc="doc.expiry_date or 'Lifetime'"/>
+                                </div>
+                            </div>
+                            
+                            <!-- Verification -->
+                            <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ecf0f1;">
+                                <p style="color: #7f8c8d; font-size: 12px;">
+                                    Verify this certificate: 
+                                    <span style="color: #3498db;">
+                                        <t t-esc="'%s/lms/certificate/verify/%s' % (base_url, doc.verification_hash)"/>
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <!-- Report Actions -->
+    <record id="action_report_lms_certificate" model="ir.actions.report">
+        <field name="name">LMS Certificate</field>
+        <field name="model">lms.certificate</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">LMS_and_marketplace.report_lms_certificate</field>
+        <field name="print_report_name">'certificate-%s' % (object.certificate_number)</field>
+        <field name="binding_model_id" ref="model_lms_certificate"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="action_report_lms_certificate_modern" model="ir.actions.report">
+        <field name="name">LMS Certificate (Modern)</field>
+        <field name="model">lms.certificate</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">LMS_and_marketplace.report_lms_certificate_modern</field>
+        <field name="print_report_name">'certificate-%s' % (object.certificate_number)</field>
+    </record>
+</odoo>

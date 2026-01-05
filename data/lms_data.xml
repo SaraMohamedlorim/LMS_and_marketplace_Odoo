@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- إنشاء أنواع المحتوى -->
+        <record id="content_type_video" model="lms.content.type">
+            <field name="name">Video</field>
+            <field name="code">video</field>
+        </record>
+        
+        <record id="content_type_pdf" model="lms.content.type">
+            <field name="name">PDF Document</field>
+            <field name="code">pdf</field>
+        </record>
+        
+        <record id="content_type_text" model="lms.content.type">
+            <field name="name">Text Article</field>
+            <field name="code">text</field>
+        </record>
+        
+        <record id="content_type_audio" model="lms.content.type">
+            <field name="name">Audio</field>
+            <field name="code">audio</field>
+        </record>
+        
+        <record id="content_type_scorm" model="lms.content.type">
+            <field name="name">SCORM Package</field>
+            <field name="code">scorm</field>
+        </record>
+        
+        <record id="content_type_url" model="lms.content.type">
+            <field name="name">External URL</field>
+            <field name="code">url</field>
+        </record>
+        
+        <record id="content_type_quiz" model="lms.content.type">
+            <field name="name">Quiz</field>
+            <field name="code">quiz</field>
+        </record>
+        
+        <!-- إنشاء حالات الإنجاز الافتراضية -->
+        <record id="achievement_course_completion" model="lms.achievement.type">
+            <field name="name">Course Completion</field>
+            <field name="description">Successfully completed a course</field>
+            <field name="points">100</field>
+            <field name="criteria_type">course_completion</field>
+            <field name="is_active">True</field>
+        </record>
+        
+        <record id="achievement_perfect_score" model="lms.achievement.type">
+            <field name="name">Perfect Score</field>
+            <field name="description">Achieved 100% on a quiz</field>
+            <field name="points">50</field>
+            <field name="criteria_type">quiz_score</field>
+            <field name="min_quiz_score">100.0</field>
+            <field name="is_active">True</field>
+        </record>
+        
+        <record id="achievement_fast_learner" model="lms.achievement.type">
+            <field name="name">Fast Learner</field>
+            <field name="description">Completed course in top 10% time</field>
+            <field name="points">75</field>
+            <field name="criteria_type">custom</field>
+            <field name="custom_criteria">Complete course faster than 90% of other students</field>
+            <field name="is_active">True</field>
+        </record>
+        
+        <record id="achievement_weekly_streak" model="lms.achievement.type">
+            <field name="name">Weekly Warrior</field>
+            <field name="description">Completed learning activities for 7 consecutive days</field>
+            <field name="points">25</field>
+            <field name="criteria_type">streak_days</field>
+            <field name="streak_days_required">7</field>
+            <field name="is_active">True</field>
+        </record>
+        
+        <!-- إنشاء قوالب الشهادات الافتراضية -->
+        <record id="certificate_template_default" model="lms.certificate.template">
+            <field name="name">Default Certificate Template</field>
+            <field name="is_active">True</field>
+            <field name="template_html"><![CDATA[
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <style>
+                        body { font-family: Arial, sans-serif; text-align: center; }
+                        .certificate { border: 20px solid #4CAF50; padding: 50px; }
+                        .header { font-size: 36px; color: #4CAF50; margin-bottom: 30px; }
+                        .student-name { font-size: 48px; font-weight: bold; margin: 20px 0; }
+                        .course-name { font-size: 24px; margin: 20px 0; }
+                        .date { font-size: 18px; margin-top: 30px; }
+                        .signature { margin-top: 50px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="certificate">
+                        <div class="header">Certificate of Completion</div>
+                        <div class="student-name">{{ student_name }}</div>
+                        <div>has successfully completed</div>
+                        <div class="course-name">{{ course_name }}</div>
+                        <div class="date">Issued on {{ issue_date }}</div>
+                        <div class="signature">
+                            <div>_________________________</div>
+                            <div>Instructor Signature</div>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            ]]></field>
+        </record>
+        
+        <!-- إعدادات النظام الافتراضية -->
+        <record id="ir_config_parameter_revenue_share" model="ir.config_parameter">
+            <field name="key">lms_marketplace.revenue_share_percentage</field>
+            <field name="value">30.0</field>
+        </record>
+        
+        <record id="ir_config_parameter_minimum_payout" model="ir.config_parameter">
+            <field name="key">lms_marketplace.minimum_payout_amount</field>
+            <field name="value">50.0</field>
+        </record>
+        
+        <record id="ir_config_parameter_payout_delay" model="ir.config_parameter">
+            <field name="key">lms_marketplace.instructor_payout_delay</field>
+            <field name="value">30</field>
+        </record>
+        
+        <record id="ir_config_parameter_allow_instructor_registration" model="ir.config_parameter">
+            <field name="key">lms_marketplace.allow_instructor_registration</field>
+            <field name="value">True</field>
+        </record>
+        
+        <!-- إنشاء مسار عمل مسبق -->
+        <record id="lms_workflow_default" model="lms.workflow">
+            <field name="name">Default Course Workflow</field>
+            <field name="is_default">True</field>
+        </record>
+        
+    </data>
+</odoo>

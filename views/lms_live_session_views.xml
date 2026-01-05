@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Live Sessions Menu -->
+        <menuitem id="menu_lms_live_sessions" 
+                  name="Live Sessions" 
+                  parent="menu_lms_main"
+                  sequence="40"/>
+                  
+        <!-- Live Sessions List View -->
+        <record id="view_lms_live_session_tree" model="ir.ui.view">
+            <field name="name">lms.live.session.tree</field>
+            <field name="model">lms.live.session</field>
+            <field name="arch" type="xml">
+                <tree string="Live Sessions">
+                    <field name="name"/>
+                    <field name="course_id"/>
+                    <field name="instructor_id"/>
+                    <field name="start_time"/>
+                    <field name="status" widget="badge" decoration-success="status=='scheduled'" decoration-warning="status=='live'" decoration-info="status=='draft'" decoration-danger="status=='cancelled'"/>
+                    <field name="registered_participants"/>
+                    <field name="available_seats"/>
+                    <field name="platform"/>
+                    <field name="join_url" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+        
+        <!-- Live Sessions Form View -->
+        <record id="view_lms_live_session_form" model="ir.ui.view">
+            <field name="name">lms.live.session.form</field>
+            <field name="model">lms.live.session</field>
+            <field name="arch" type="xml">
+                <form string="Live Session">
+                    <header>
+                        <button name="action_schedule" type="object" string="Schedule" states="draft" class="btn-primary"/>
+                        <button name="action_start" type="object" string="Start" states="scheduled" class="btn-primary"/>
+                        <button name="action_end" type="object" string="End" states="live" class="btn-warning"/>
+                        <button name="action_cancel" type="object" string="Cancel" states="draft,scheduled" class="btn-danger"/>
+                        <button name="action_join_session" type="object" string="Join Session" states="scheduled,live" class="btn-success"/>
+                        <button name="action_view_attendance" type="object" string="Attendance" states="completed" class="btn-info"/>
+                        <field name="status" widget="statusbar" statusbar_visible="draft,scheduled,live,completed,cancelled"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button type="action" class="oe_stat_button" icon="fa-users">
+                                <field name="registered_participants" widget="statinfo" string="Registered"/>
+                            </button>
+                            <button type="action" class="oe_stat_button" icon="fa-check-circle">
+                                <field name="attendance_count" widget="statinfo" string="Attended"/>
+                            </button>
+                            <button type="action" class="oe_stat_button" icon="fa-percent">
+                                <field name="attendance_rate" widget="statinfo" string="Rate"/>
+                            </button>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="course_id"/>
+                                <field name="instructor_id"/>
+                                <field name="session_type"/>
+                                <field name="platform"/>
+                            </group>
+                            <group>
+                                <field name="start_time"/>
+                                <field name="duration"/>
+                                <field name="end_time" readonly="1"/>
+                                <field name="timezone"/>
+                                <field name="max_participants"/>
+                                <field name="available_seats" readonly="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Details">
+                                <field name="description"/>
+                                <group>
+                                    <field name="meeting_id"/>
+                                    <field name="meeting_password"/>
+                                    <field name="join_url"/>
+                                    <field name="recording_url" attrs="{'invisible': [('status', '!=', 'completed')]}"/>
+                                </group>
+                            </page>
+                            <page string="Registration">
+                                <group>
+                                    <field name="require_registration"/>
+                                    <field name="registration_deadline"/>
+                                    <field name="auto_approve_registrations"/>
+                                </group>
+                                <field name="enrolled_students" widget="many2many_tags"/>
+                            </page>
+                            <page string="Materials">
+                                <field name="presentation_file" filename="presentation_filename"/>
+                                <field name="resource_ids" widget="many2many_binary"/>
+                            </page>
+                            <page string="Q&amp;A">
+                                <field name="qna_questions" nolabel="1">
+                                    <tree>
+                                        <field name="student_id"/>
+                                        <field name="question"/>
+                                        <field name="answer"/>
+                                        <field name="is_answered" widget="boolean_toggle"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        
+        <!-- Live Sessions Search View -->
+        <record id="view_lms_live_session_search" model="ir.ui.view">
+            <field name="name">lms.live.session.search</field>
+            <field name="model">lms.live.session</field>
+            <field name="arch" type="xml">
+                <search string="Live Sessions">
+                    <field name="name"/>
+                    <field name="course_id"/>
+                    <field name="instructor_id"/>
+                    <filter string="Upcoming" name="upcoming" domain="[('start_time', '>=', context_today()), ('status', 'in', ['draft', 'scheduled'])]"/>
+                    <filter string="Live Now" name="live" domain="[('status', '=', 'live')]"/>
+                    <filter string="Completed" name="completed" domain="[('status', '=', 'completed')]"/>
+                    <separator/>
+                    <filter string="My Sessions" name="my_sessions" domain="[('instructor_id', '=', user.partner_id.id)]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Course" name="group_by_course" context="{'group_by': 'course_id'}"/>
+                        <filter string="Status" name="group_by_status" context="{'group_by': 'status'}"/>
+                        <filter string="Platform" name="group_by_platform" context="{'group_by': 'platform'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        
+        <!-- Live Sessions Action -->
+        <record id="action_lms_live_session" model="ir.actions.act_window">
+            <field name="name">Live Sessions</field>
+            <field name="res_model">lms.live.session</field>
+            <field name="view_mode">tree,form,calendar,kanban</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No live sessions scheduled. Create a live session to host webinars or virtual classrooms.
+                </p>
+            </field>
+        </record>
+        
+        <record id="action_lms_live_session_calendar" model="ir.actions.act_window.view">
+            <field name="act_window_id" ref="action_lms_live_session"/>
+            <field name="view_id" ref="view_lms_live_session_calendar"/>
+            <field name="view_mode">calendar</field>
+            <field name="sequence" eval="3"/>
+        </record>
+        
+        <record id="view_lms_live_session_calendar" model="ir.ui.view">
+            <field name="name">lms.live.session.calendar</field>
+            <field name="model">lms.live.session</field>
+            <field name="arch" type="xml">
+                <calendar string="Live Sessions Calendar"
+                          date_start="start_time"
+                          date_stop="end_time"
+                          color="course_id"
+                          mode="month">
+                    <field name="name"/>
+                    <field name="instructor_id"/>
+                    <field name="status"/>
+                </calendar>
+            </field>
+        </record>
+        
+        <menuitem id="menu_lms_live_sessions_list" 
+                  name="All Sessions" 
+                  parent="menu_lms_live_sessions"
+                  action="action_lms_live_session"
+                  sequence="10"/>
+                  
+        <!-- Attendance View -->
+        <record id="view_lms_live_session_attendance_tree" model="ir.ui.view">
+            <field name="name">lms.live.session.attendance.tree</field>
+            <field name="model">lms.live.session.attendance</field>
+            <field name="arch" type="xml">
+                <tree string="Attendance">
+                    <field name="student_id"/>
+                    <field name="status" widget="badge" decoration-success="status=='attended'" decoration-warning="status=='late'" decoration-danger="status=='absent'"/>
+                    <field name="join_time"/>
+                    <field name="leave_time"/>
+                    <field name="duration"/>
+                    <field name="notes"/>
+                </tree>
+            </field>
+        </record>
+        
+        <!-- Server Actions for Live Sessions -->
+        <record id="action_send_session_reminders" model="ir.actions.server">
+            <field name="name">Send Session Reminders</field>
+            <field name="model_id" ref="model_lms_live_session"/>
+            <field name="state">code</field>
+            <field name="code">
+                if records:
+                    for session in records:
+                        session._send_invitations()
+            </field>
+        </record>
+        
+    </data>
+</odoo>

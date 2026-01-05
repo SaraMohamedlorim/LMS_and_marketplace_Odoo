@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Quiz Tree View -->
+    <record id="view_lms_quiz_tree" model="ir.ui.view">
+        <field name="name">lms.quiz.tree</field>
+        <field name="model">lms.quiz</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="module_id"/>
+                <field name="course_id"/>
+                <field name="question_count"/>
+                <field name="passing_score" string="Passing %"/>
+                <field name="time_limit" string="Time Limit (min)"/>
+                <field name="max_attempts"/>
+                <field name="require_passing"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Quiz Form View -->
+    <record id="view_lms_quiz_form" model="ir.ui.view">
+        <field name="name">lms.quiz.form</field>
+        <field name="model">lms.quiz</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="module_id" options="{'no_create': True}"/>
+                            <field name="course_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="passing_score" string="Passing Score (%)"/>
+                            <field name="time_limit" string="Time Limit (minutes)"/>
+                            <field name="max_attempts"/>
+                            <field name="require_passing"/>
+                        </group>
+                    </group>
+                    
+                    <field name="description"/>
+                    <field name="instructions"/>
+                    
+                    <group string="Quiz Settings">
+                        <group>
+                            <field name="shuffle_questions"/>
+                            <field name="shuffle_answers"/>
+                        </group>
+                        <group>
+                            <field name="show_correct_answers"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Questions">
+                            <field name="questions" mode="tree,form">
+                                <tree editable="bottom" default_order="sequence" create="false">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name" widget="html"/>
+                                    <field name="question_type"/>
+                                    <field name="points"/>
+                                    <field name="answers" widget="many2many_tags"/>
+                                </tree>
+                                <form>
+                                    <group>
+                                        <group>
+                                            <field name="name" nolabel="1" placeholder="Enter your question here..."/>
+                                        </group>
+                                        <group>
+                                            <field name="question_type"/>
+                                            <field name="points"/>
+                                            <field name="sequence"/>
+                                        </group>
+                                    </group>
+                                    
+                                    <field name="explanation" nolabel="1" placeholder="Explanation shown after answering..."/>
+                                    
+                                    <div attrs="{'invisible': [('question_type', 'not in', ['multiple_choice', 'true_false'])]}">
+                                        <label for="answers" string="Answer Options"/>
+                                        <field name="answers" mode="tree,form" nolabel="1">
+                                            <tree editable="bottom" default_order="sequence" create="false">
+                                                <field name="sequence" widget="handle"/>
+                                                <field name="text" widget="html"/>
+                                                <field name="is_correct"/>
+                                                <field name="feedback"/>
+                                            </tree>
+                                            <form>
+                                                <group>
+                                                    <field name="text" nolabel="1" placeholder="Answer text..."/>
+                                                    <field name="is_correct"/>
+                                                    <field name="sequence"/>
+                                                </group>
+                                                <field name="feedback" placeholder="Feedback when this answer is selected..."/>
+                                            </form>
+                                        </field>
+                                    </div>
+                                </form>
+                            </field>
+                        </page>
+                        
+                        <page string="Attempts">
+                            <field name="id" invisible="1"/>
+                            <field name="module_id" invisible="1"/>
+                            <button name="%(lms_marketplace.action_lms_quiz_attempt)d" type="action" 
+                                    string="View Quiz Attempts" class="btn-secondary"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Quiz Attempt Tree View -->
+    <record id="view_lms_quiz_attempt_tree" model="ir.ui.view">
+        <field name="name">lms.quiz.attempt.tree</field>
+        <field name="model">lms.quiz.attempt</field>
+        <field name="arch" type="xml">
+            <tree decoration-success="is_passed==True" decoration-danger="is_passed==False">
+                <field name="student_id"/>
+                <field name="quiz_id"/>
+                <field name="attempt_number"/>
+                <field name="start_time"/>
+                <field name="score" widget="percentpie"/>
+                <field name="is_passed"/>
+                <field name="time_spent" string="Time Spent (min)"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Quiz Attempt Form View -->
+    <record id="view_lms_quiz_attempt_form" model="ir.ui.view">
+        <field name="name">lms.quiz.attempt.form</field>
+        <field name="model">lms.quiz.attempt</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="student_id" readonly="1"/>
+                            <field name="quiz_id" readonly="1"/>
+                            <field name="enrollment_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="attempt_number" readonly="1"/>
+                            <field name="score" widget="percentpie" readonly="1"/>
+                            <field name="is_passed" readonly="1"/>
+                            <field name="state" readonly="1"/>
+                        </group>
+                    </group>
+                    
+                    <group>
+                        <group>
+                            <field name="start_time" readonly="1"/>
+                            <field name="end_time" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="time_spent" readonly="1"/>
+                            <field name="time_limit" readonly="1"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Questions & Answers">
+                            <field name="questions" mode="tree">
+                                <tree readonly="1">
+                                    <field name="question_id" widget="many2one_button"/>
+                                    <field name="points_possible" string="Possible Points"/>
+                                    <field name="points_earned" string="Earned Points"/>
+                                    <field name="is_correct"/>
+                                    <field name="student_essay_answer" widget="text" attrs="{'invisible': [('question_id.question_type', '!=', 'essay')]}"/>
+                                </tree>
+                            </field>
+                        </page>
+                        
+                        <page string="Proctoring Data" attrs="{'invisible': [('proctoring_suspicion_score', '=', 0)]}">
+                            <group>
+                                <field name="proctoring_suspicion_score" widget="progressbar" options="{'editable': false}"/>
+                                <field name="proctoring_suspicious_events" widget="text"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Quiz Actions -->
+    <record id="action_lms_quiz" model="ir.actions.act_window">
+        <field name="name">Quizzes</field>
+        <field name="res_model">lms.quiz</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="action_lms_quiz_attempt" model="ir.actions.act_window">
+        <field name="name">Quiz Attempts</field>
+        <field name="res_model">lms.quiz.attempt</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[]</field>
+    </record>
+</odoo>

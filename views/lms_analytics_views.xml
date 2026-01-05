@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Analytics Dashboard -->
+    <record id="view_lms_analytics_dashboard" model="ir.ui.view">
+        <field name="name">lms.analytics.dashboard</field>
+        <field name="model">lms.analytics</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="o_dashboard o_lms_dashboard">
+                        <!-- KPI Cards -->
+                        <div class="row mt-3">
+                            <div class="col-lg-3 col-md-6">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h3 class="text-primary">
+                                            <field name="total_courses" readonly="1" nolabel="1"/>
+                                        </h3>
+                                        <p>Total Courses</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h3 class="text-success">
+                                            <field name="total_students" readonly="1" nolabel="1"/>
+                                        </h3>
+                                        <p>Total Students</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h3 class="text-warning">
+                                            <field name="total_enrollments" readonly="1" nolabel="1"/>
+                                        </h3>
+                                        <p>Total Enrollments</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h3 class="text-info">
+                                            <field name="completion_rate" widget="percentpie" readonly="1" nolabel="1"/>
+                                        </h3>
+                                        <p>Completion Rate</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Charts and Reports -->
+                        <div class="row mt-3">
+                            <div class="col-lg-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5>Course Popularity</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="course_popularity_chart"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5>Enrollment Trends</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="enrollment_trends_chart"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Activity -->
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5>Recent Completions</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <field name="recent_completions" mode="tree" nolabel="1">
+                                            <tree>
+                                                <field name="student_id"/>
+                                                <field name="course_id"/>
+                                                <field name="completion_date"/>
+                                                <field name="score" widget="percentpie"/>
+                                            </tree>
+                                        </field>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Corporate Analytics View -->
+    <record id="view_lms_corporate_analytics" model="ir.ui.view">
+        <field name="name">lms.corporate.analytics</field>
+        <field name="model">lms.analytics</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="o_corporate_dashboard">
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h3>
+                                            <field name="corporate_employees" readonly="1" nolabel="1"/>
+                                        </h3>
+                                        <p>Total Employees</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h3>
+                                            <field name="corporate_enrollments" readonly="1" nolabel="1"/>
+                                        </h3>
+                                        <p>Training Enrollments</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h3>
+                                            <field name="corporate_completion_rate" widget="percentpie" readonly="1" nolabel="1"/>
+                                        </h3>
+                                        <p>Overall Completion</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Department Performance -->
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5>Department Performance</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <field name="department_performance" mode="tree" nolabel="1">
+                                            <tree>
+                                                <field name="department_name"/>
+                                                <field name="enrolled_employees"/>
+                                                <field name="completion_rate" widget="percentpie"/>
+                                                <field name="average_score" widget="percentpie"/>
+                                            </tree>
+                                        </field>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Analytics Action -->
+    <record id="action_lms_analytics" model="ir.actions.act_window">
+        <field name="name">LMS Analytics</field>
+        <field name="res_model">lms.analytics</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+        <field name="view_id" ref="view_lms_analytics_dashboard"/>
+    </record>
+</odoo>
